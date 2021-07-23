@@ -1,0 +1,46 @@
+diff --git a/config.def.h b/config.def.h
+index 1edb647..2116061 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -2,6 +2,10 @@
+ /* Default settings; can be overriden by command line. */
+ 
+ static int topbar = 1;                      /* -b  option; if 0, dmenu appears at bottom     */
++
++static const unsigned int barvpadpx = 6;
++static const unsigned int barhpadpx = 6;
++
+ /* -fn option overrides fonts[0]; default X11 font or font set */
+ static const char *fonts[] = {
+ 	"monospace:size=10"
+diff --git a/dmenu.c b/dmenu.c
+index 65f25ce..0ee74a5 100644
+--- a/dmenu.c
++++ b/dmenu.c
+@@ -608,7 +608,7 @@ setup(void)
+ 	utf8 = XInternAtom(dpy, "UTF8_STRING", False);
+ 
+ 	/* calculate menu geometry */
+-	bh = drw->fonts->h + 2;
++	bh = drw->fonts->h + barvpadpx * 2;
+ 	lines = MAX(lines, 0);
+ 	mh = (lines + 1) * bh;
+ #ifdef XINERAMA
+@@ -651,7 +651,7 @@ setup(void)
+ 		y = topbar ? 0 : wa.height - mh;
+ 		mw = wa.width;
+ 	}
+-	promptw = (prompt && *prompt) ? TEXTW(prompt) - lrpad / 4 : 0;
++	promptw = (prompt && *prompt) ? TEXTW(prompt) : 0;
+ 	inputw = MIN(inputw, mw/3);
+ 	match();
+ 
+@@ -750,7 +750,7 @@ main(int argc, char *argv[])
+ 	drw = drw_create(dpy, screen, root, wa.width, wa.height);
+ 	if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
+ 		die("no fonts could be loaded.");
+-	lrpad = drw->fonts->h;
++	lrpad = barhpadpx * 2;
+ 
+ #ifdef __OpenBSD__
+ 	if (pledge("stdio rpath", NULL) == -1)
